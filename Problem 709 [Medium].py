@@ -20,35 +20,30 @@ Return two, as there are only two ways to get to the bottom right:
 The top left corner and bottom right corner will always be 0.
 """
 
-matrix = [[0, 0, 1],
-          [0, 0, 1],
-          [1, 0, 0]]
-size = (len(matrix[0]) - 1, len(matrix) - 1)
-counter = [0]
+test_case = [[0, 0, 1],
+             [0, 0, 1],
+             [1, 0, 0]]
 
 
-def solver(x: int, y: int, visited=set()):
-    if (x, y) == size:
-        counter[0] += 1
-        return
+def find_paths_to_bottom(matrix: list[list]) -> int:
+    n = len(matrix)
+    m = len(matrix[0])
 
-    if (x, y) in visited or matrix[y][x] == 1:
-        return
+    table = [[0 for j in range(m)] for i in range(n)]
 
-    visited.add((x, y))
+    table[0][0] = 1
 
-    if x < size[0]:
-        solver(x + 1, y, visited.copy())
-
-    if y < size[0]:
-        solver(x, y + 1, visited.copy())
-
-    if x > 0:
-        solver(x - 1, y, visited.copy())
-
-    if y > 0:
-        solver(x, y - 1, visited.copy())
+    for i in range(n):
+        for j in range(m):
+            if matrix[i][j] == 1:
+                table[i][j] = 0
+            elif i == 0 and j > 0:
+                table[i][j] = table[i][j - 1]
+            elif j == 0 and i > 0:
+                table[i][j] = table[i - 1][j]
+            elif i > 0 and j > 0:
+                table[i][j] = table[i][j - 1] + table[i - 1][j]
+    return table[n - 1][m - 1]
 
 
-solver(0, 0)
-print(counter)
+print(find_paths_to_bottom(test_case))
